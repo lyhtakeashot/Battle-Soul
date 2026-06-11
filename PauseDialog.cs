@@ -45,7 +45,7 @@ namespace Battle_Soul
             ChkEndless = new CheckBox();
             ChkEndless.Text = "无尽模式";
             ChkEndless.AutoSize = true;
-            // place checkbox at top-left area
+            // 将复选框放置在左上角区域
             ChkEndless.Location = new Point(12, 12);
 
             // 统一按钮尺寸

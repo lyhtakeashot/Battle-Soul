@@ -11,9 +11,6 @@ namespace Battle_Soul
     {
         /// 存放加载后的位图对象。
         private Bitmap _desktopBitmap;
-        /// 构造器：通过文件路径加载位图。
-        /// 注意：此处不做异常捕获或路径转换，调用方需保证路径正确。
-        /// <param name="bitmapFile">位图文件路径，例如 "Image\\背景图.png"</param>
         public Desktop(string bitmapFile)
         {
             // 直接使用 Bitmap 构造函数加载图片文件

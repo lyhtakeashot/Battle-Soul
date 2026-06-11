@@ -30,6 +30,9 @@ namespace Battle_Soul
         //DOT持续伤害
         private int playerDotCount;//玩家DOT层数
         private int playerDotRound;//玩家DOT剩余持续回合
+        // 标记：本回合刚被施加的 DOT（用于避免在施加当回合立即结算）
+        private bool playerDotJustApplied = false; // 敌人对玩家施加的 DOT（player 受到的 DOT）
+        private bool enemyDotJustApplied = false;  // 玩家对敌人施加的 DOT（enemy 受到的 DOT）
         //临时buff状态（仅限当前回合有效）
         private bool playerIsBlock;//玩家是否格挡姿势
         private bool playerIsCounter;//玩家是否反击姿势
@@ -60,11 +63,15 @@ namespace Battle_Soul
         private const int DotPerLayer = 4;
         // 基础盾值
         private const int ShieldValue = 15;
+        // 可配置的角色图片路径（普通模式 / 无尽模式）
+        private string playerImageNormalPath = null;
+        private string playerImageEndlessPath = null;
+        private string enemyImageNormalPath = null;
+        private string enemyImageEndlessPath = null;
         // 构造函数: BattleSoul
         public BattleSoul()
         {
             InitializeComponent();
-            // 直接使用相对路径加载桌面图片（不做容错）
             _desktop = new Desktop("Image\\背景图.png");
             // 清除 PictureBox.Image 避免与自绘冲突，绑定 Paint 并置底重绘
             pictureBoxDesktop.Image = null;
@@ -77,6 +84,14 @@ namespace Battle_Soul
             // 默认玩家先手
             playerFirst = true;
             isplayerTurn = true;//开局自动生效
+
+            // 设置默认角色图片路径（常规 / 无尽）
+            SetCharacterImagePaths(
+                "Image\\方源第一次宿命大战.jpg",
+                "Image\\方源第二次宿命大战.jpg",
+                "Image\\龙公.png",
+                "Image\\龙公三气归来.png"
+            );
 
             // 初始化属性
             InitStats();
@@ -112,11 +127,22 @@ namespace Battle_Soul
                 ReshowDelay = 200,
                 ShowAlways = true
             };
-
             RefreshUI();
             this.Resize += BattleSoul_Resize;
         }
-
+        // 方法: BattleSoul_Load
+        // 窗体加载事件（初始化后回调）
+        private void BattleSoul_Load(object sender, EventArgs e)
+        {
+            //设置WindowsMediaPlayer组件不可见
+            //添加该组件的方法:工具箱空白处->鼠标右键->选择项->COM组件->Windows Media Player
+            axWindowsMediaPlayerBGM.Visible = false;
+            axWindowsMediaPlayereasteregg.Visible = false;
+            //为WindowsMediaPlayer组件设置音乐文件并启动播放
+            axWindowsMediaPlayerBGM.URL = "Sound\\bgm.mp3";
+            axWindowsMediaPlayerBGM.settings.autoStart = true;
+            axWindowsMediaPlayerBGM.settings.setMode("loop", true);
+        }
         // 方法: BattleSoul_Resize
         // 窗体尺寸变化处理（用于触发自定义全屏逻辑）
         private void BattleSoul_Resize(object? sender, EventArgs e)
@@ -654,13 +680,15 @@ namespace Battle_Soul
             DealDamageToEnemy(instant, "玩家 持续伤害(即时伤害)");
             enemyDotCount += 1;
             enemyDotRound = 3;
+            // 标记为本回合刚被施加，周期性伤害从下一个回合开始结算
+            enemyDotJustApplied = true;
             AppendLog("玩家 对敌人施加了 持续伤害 层数 +1 (持续3回合)。");
             RefreshUI();
             CheckGameOver();
         }
 
         // 方法: DoStackAtk
-        // 执行叠层攻击（五指拳心剑）的效果并处理叠层耗尽逻辑
+        // 执行叠层攻击（五指拳心剑）的效果并处理叠层耗尽逻辑，PS：彩蛋也写在这里了
         private void DoStackAtk()
         {
             // 新伤害模型：基础伤害为6点，每次打出伤害乘以3
@@ -693,12 +721,25 @@ namespace Battle_Soul
                     try
                     {
                         var poem = "历经五十四次劫，劫云仍旧漫遮天。胸中魂光压众生，拳里剑气纵北原。时来时去四百载，无死何能生新颜?弃此残躯换清风，卷席苍穹复光年!";
-                        var bf = new BroadcastForm(poem);
+                        // 由于彩蛋音频时长 21 秒，设置诗词滚动时长为 21000ms（可在 20000-22000ms 之间微调）
+                        var bf = new BroadcastForm(poem, durationMs: 21000);
                         bf.TopMost = true;
-                        // 彩蛋播放期间暂停游戏逻辑
-                        isPaused = true;
-                        bf.ShowDialog(this);
-                        isPaused = false;
+                        // 彩蛋播放期间暂停游戏逻辑，并播放彩蛋音乐
+                        try
+                        {
+                            isPaused = true;
+                            axWindowsMediaPlayerBGM.Ctlcontrols.pause();
+                            axWindowsMediaPlayereasteregg.URL = "Sound\\游戏彩蛋.mp3";
+                            axWindowsMediaPlayereasteregg.Ctlcontrols.play();
+                            bf.ShowDialog(this);
+                        }
+                        finally
+                        {
+                            // 停止音乐并恢复游戏
+                            try { axWindowsMediaPlayereasteregg.Ctlcontrols.stop(); } catch { }
+                            isPaused = false;
+                            axWindowsMediaPlayerBGM.Ctlcontrols.play();
+                        }
                     }
                     catch
                     {
@@ -838,12 +879,7 @@ namespace Battle_Soul
 
         }
 
-        // 方法: BattleSoul_Load
-        // 窗体加载事件（初始化后回调）
-        private void BattleSoul_Load(object sender, EventArgs e)
-        {
-            
-        }
+        
 
         // 方法: InitStats
         // 初始化玩家与敌人的基础属性并构建牌组
@@ -879,6 +915,73 @@ namespace Battle_Soul
             enemyOverflowDamage = 0;
             // 构建卡组
             BuildInitialDeck();
+            // 初始化并根据模式更新角色图片
+            UpdateCharacterImages();
+        }
+
+        // 方法：设置角色图片路径（由调用者指定资源路径或文件路径）
+        public void SetCharacterImagePaths(string playerNormal, string playerEndless, string enemyNormal, string enemyEndless)
+        {
+            playerImageNormalPath = playerNormal;
+            playerImageEndlessPath = playerEndless;
+            enemyImageNormalPath = enemyNormal;
+            enemyImageEndlessPath = enemyEndless;
+            UpdateCharacterImages();
+        }
+
+        // 方法：根据当前模式更新 PictureBox 的图片，支持 1:1 图片自动缩放到 PictureBox（SizeMode = Zoom）
+        private void UpdateCharacterImages()
+        {
+            try
+            {
+                // 先释放现有图片避免文件锁定
+                if (picPlayer.Image != null)
+                {
+                    var old = picPlayer.Image;
+                    picPlayer.Image = null;
+                    old.Dispose();
+                }
+                if (picEnemy.Image != null)
+                {
+                    var old = picEnemy.Image;
+                    picEnemy.Image = null;
+                    old.Dispose();
+                }
+
+                string pPath = isEndlessMode ? playerImageEndlessPath ?? playerImageNormalPath : playerImageNormalPath;
+                string ePath = isEndlessMode ? enemyImageEndlessPath ?? enemyImageNormalPath : enemyImageNormalPath;
+
+                if (!string.IsNullOrEmpty(pPath) && System.IO.File.Exists(pPath))
+                {
+                    // 使用从文件加载并克隆的方式，避免文件句柄锁定
+                    using (var img = Image.FromFile(pPath))
+                    {
+                        picPlayer.Image = new Bitmap(img);
+                    }
+                }
+                else
+                {
+                    picPlayer.Image = null;
+                }
+
+                if (!string.IsNullOrEmpty(ePath) && System.IO.File.Exists(ePath))
+                {
+                    using (var img = Image.FromFile(ePath))
+                    {
+                        picEnemy.Image = new Bitmap(img);
+                    }
+                }
+                else
+                {
+                    picEnemy.Image = null;
+                }
+            }
+            catch
+            {
+                // 忽略图片加载错误，保持为空
+                picPlayer.Image = null;
+                picEnemy.Image = null;
+            }
         }
 
         // 日志输出（追加并滚动）
@@ -1187,8 +1290,14 @@ namespace Battle_Soul
 
             isplayerTurn = false;
             RefreshUI();
+            // 玩家结束回合后，先结算 敌人 之前施加在玩家身上的 DOT（若有且非本回合刚施加）
+            ApplyPlayerDotTickIfDue();
+            CheckGameOver();
+            if (isGameOver) return;
             // 敌方行动
             EnemyAction();
+            // 敌人行动结束后，结算 玩家 之前施加在敌人身上的 DOT（若有且非本回合刚施加）
+            ApplyEnemyDotTickIfDue();
             // 回合结算
             ResolveEndOfRound();
             RefreshUI();
@@ -1238,6 +1347,8 @@ namespace Battle_Soul
                     DealDamageToPlayer(instant, "敌人 DOT侵蚀(即时伤害)");
                     playerDotCount += 1;
                     playerDotRound = 3;
+                    // 标记为本回合刚被施加，周期性伤害从下一个回合开始结算
+                    playerDotJustApplied = true;
                     AppendLog("敌人 使用 DOT 侵蚀。");
                     return;
                 }
@@ -1270,65 +1381,7 @@ namespace Battle_Soul
         // 回合结束统一结算：DOT、清除临时buff、重置充能、切换回合
         private void ResolveEndOfRound()
         {
-            // 结算 DOT（先消耗护盾，再扣生命；不触发格挡/反击）
-            if (playerDotCount > 0)
-            {
-                int totalDmg = playerDotCount * DotPerLayer;
-                int absorbed = Math.Min(playerShied, totalDmg);
-                if (absorbed > 0)
-                {
-                    playerShied -= absorbed;
-                    AppendLog($"玩家 护盾抵挡了 {absorbed} 点 DOT 伤害。\n");
-                }
-                int remaining = totalDmg - absorbed;
-                if (remaining > 0)
-                {
-                    playerCurHp -= remaining;
-                    if (playerCurHp < 0) playerCurHp = 0;
-                    AppendLog($"玩家 受到 DOT {totalDmg} 点伤害（{playerDotCount} 层），护盾吸收 {absorbed} 点，生命扣除 {remaining} 点。");
-                }
-                else
-                {
-                    AppendLog($"玩家 受到 DOT {totalDmg} 点伤害，被护盾完全抵挡（吸收 {absorbed} 点）。");
-                }
-                playerDotRound -= 1;
-                if (playerDotRound <= 0)
-                {
-                    playerDotCount = 0;
-                    playerDotRound = 0;
-                    AppendLog("玩家 的 DOT 效果消失。");
-                }
-            }
-            if (enemyDotCount > 0)
-            {
-                int totalDmg = enemyDotCount * DotPerLayer;
-                int absorbed = Math.Min(enemyShield, totalDmg);
-                if (absorbed > 0)
-                {
-                    enemyShield -= absorbed;
-                    AppendLog($"敌人 护盾抵挡了 {absorbed} 点 DOT 伤害。\n");
-                }
-                int remaining = totalDmg - absorbed;
-                if (remaining > 0)
-                {
-                    int actual = Math.Min(remaining, enemyCurHp);
-                    enemyCurHp -= remaining;
-                    if (enemyCurHp < 0) enemyCurHp = 0;
-                    AppendLog($"敌人 受到 DOT {totalDmg} 点伤害（{enemyDotCount} 层），护盾吸收 {absorbed} 点，生命扣除 {remaining} 点。");
-                    playerTotalDamageDealt += actual;
-                }
-                else
-                {
-                    AppendLog($"敌人 受到 DOT {totalDmg} 点伤害，被护盾完全抵挡（吸收 {absorbed} 点）。");
-                }
-                enemyDotRound -= 1;
-                if (enemyDotRound <= 0)
-                {
-                    enemyDotCount = 0;
-                    enemyDotRound = 0;
-                    AppendLog("敌人 的 DOT 效果消失。");
-                }
-            }
+            // 注意：DOT 的周期性结算已在玩家结束回合与敌人行动后分别处理，故此处不重复结算。
 
             // 清空临时 buff（格挡、反击），护盾为持续值不在此处清空
             playerIsBlock = false;
@@ -1360,6 +1413,84 @@ namespace Battle_Soul
                 DrawToHand(3, allowOverdraw: true);
             }
             AppendLog("新回合开始：玩家回合。已进行抽牌。");
+        }
+
+        // 在玩家结束回合后调用：结算敌人之前施加在玩家身上的 DOT（如果到期且不是本回合刚施加）
+        private void ApplyPlayerDotTickIfDue()
+        {
+            if (playerDotCount <= 0) return;
+            if (playerDotJustApplied)
+            {
+                // 本回合刚被施加，跳过首次结算
+                playerDotJustApplied = false;
+                AppendLog("玩家 刚被施加 DOT，本回合延后开始结算（从下回合生效）。");
+                return;
+            }
+            int totalDmg = playerDotCount * DotPerLayer;
+            int absorbed = Math.Min(playerShied, totalDmg);
+            if (absorbed > 0)
+            {
+                playerShied -= absorbed;
+                AppendLog($"玩家 护盾抵挡了 {absorbed} 点 DOT 伤害。\n");
+            }
+            int remaining = totalDmg - absorbed;
+            if (remaining > 0)
+            {
+                playerCurHp -= remaining;
+                if (playerCurHp < 0) playerCurHp = 0;
+                AppendLog($"玩家 受到 DOT {totalDmg} 点伤害（{playerDotCount} 层），护盾吸收 {absorbed} 点，生命扣除 {remaining} 点。");
+            }
+            else
+            {
+                AppendLog($"玩家 受到 DOT {totalDmg} 点伤害，被护盾完全抵挡（吸收 {absorbed} 点）。");
+            }
+            playerDotRound -= 1;
+            if (playerDotRound <= 0)
+            {
+                playerDotCount = 0;
+                playerDotRound = 0;
+                AppendLog("玩家 的 DOT 效果消失。");
+            }
+        }
+
+        // 在敌人行动并结束后调用：结算玩家之前施加在敌人身上的 DOT（如果到期且不是本回合刚施加）
+        private void ApplyEnemyDotTickIfDue()
+        {
+            if (enemyDotCount <= 0) return;
+            if (enemyDotJustApplied)
+            {
+                // 本回合刚被施加，跳过首次结算
+                enemyDotJustApplied = false;
+                AppendLog("敌人 刚被施加 DOT，本回合延后开始结算（从下回合生效）。");
+                return;
+            }
+            int totalDmg = enemyDotCount * DotPerLayer;
+            int absorbed = Math.Min(enemyShield, totalDmg);
+            if (absorbed > 0)
+            {
+                enemyShield -= absorbed;
+                AppendLog($"敌人 护盾抵挡了 {absorbed} 点 DOT 伤害。\n");
+            }
+            int remaining = totalDmg - absorbed;
+            if (remaining > 0)
+            {
+                int actual = Math.Min(remaining, enemyCurHp);
+                enemyCurHp -= remaining;
+                if (enemyCurHp < 0) enemyCurHp = 0;
+                AppendLog($"敌人 受到 DOT {totalDmg} 点伤害（{enemyDotCount} 层），护盾吸收 {absorbed} 点，生命扣除 {remaining} 点。");
+                playerTotalDamageDealt += actual;
+            }
+            else
+            {
+                AppendLog($"敌人 受到 DOT {totalDmg} 点伤害，被护盾完全抵挡（吸收 {absorbed} 点）。");
+            }
+            enemyDotRound -= 1;
+            if (enemyDotRound <= 0)
+            {
+                enemyDotCount = 0;
+                enemyDotRound = 0;
+                AppendLog("敌人 的 DOT 效果消失。");
+            }
         }
 
         private void logTextBox_TextChanged(object sender, EventArgs e)

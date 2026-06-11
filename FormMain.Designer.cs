@@ -23,6 +23,7 @@
         // 窗体控件初始化方法（由 Designer 生成），请勿随意修改控件声明顺序
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BattleSoul));
             labelplayerName = new Label();
             labelplayerHp = new Label();
             labelplayerShield = new Label();
@@ -49,13 +50,19 @@
             picDraw = new PictureBox();
             btnPause = new Button();
             pictureBoxDesktop = new PictureBox();
+            axWindowsMediaPlayerBGM = new AxWMPLib.AxWindowsMediaPlayer();
+            axWindowsMediaPlayereasteregg = new AxWMPLib.AxWindowsMediaPlayer();
             ((System.ComponentModel.ISupportInitialize)picPlayer).BeginInit();
             ((System.ComponentModel.ISupportInitialize)picEnemy).BeginInit();
             ((System.ComponentModel.ISupportInitialize)picDiscard).BeginInit();
             ((System.ComponentModel.ISupportInitialize)picDraw).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBoxDesktop).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)axWindowsMediaPlayerBGM).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)axWindowsMediaPlayereasteregg).BeginInit();
             SuspendLayout();
-            // 控件: labelplayerName（玩家名称标签）
+            // 
+            // labelplayerName
+            // 
             labelplayerName.AutoSize = true;
             labelplayerName.Font = new Font("宋体", 12F, FontStyle.Bold, GraphicsUnit.Point, 134);
             labelplayerName.Location = new Point(20, 20);
@@ -65,7 +72,9 @@
             labelplayerName.TabIndex = 0;
             labelplayerName.Text = "玩家";
             labelplayerName.Click += playerNameLabel_Click;
-            // 控件: labelplayerHp（玩家生命标签）
+            // 
+            // labelplayerHp
+            // 
             labelplayerHp.AutoSize = true;
             labelplayerHp.Font = new Font("宋体", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 134);
             labelplayerHp.ForeColor = Color.Red;
@@ -75,7 +84,9 @@
             labelplayerHp.Size = new Size(159, 20);
             labelplayerHp.TabIndex = 1;
             labelplayerHp.Text = "生命值：100/100";
-            // 控件: labelplayerShield（玩家护盾标签）
+            // 
+            // labelplayerShield
+            // 
             labelplayerShield.AutoSize = true;
             labelplayerShield.Font = new Font("宋体", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 134);
             labelplayerShield.ForeColor = Color.Gray;
@@ -85,7 +96,9 @@
             labelplayerShield.Size = new Size(99, 20);
             labelplayerShield.TabIndex = 1;
             labelplayerShield.Text = "护盾值：0";
-            // 控件: labelplayerEnergy（玩家充能标签）
+            // 
+            // labelplayerEnergy
+            // 
             labelplayerEnergy.AutoSize = true;
             labelplayerEnergy.Font = new Font("宋体", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 134);
             labelplayerEnergy.ForeColor = Color.Blue;
@@ -95,7 +108,9 @@
             labelplayerEnergy.Size = new Size(119, 20);
             labelplayerEnergy.TabIndex = 1;
             labelplayerEnergy.Text = "当前充能：4";
-            // 控件: labelplayerStack（玩家叠层次数标签）
+            // 
+            // labelplayerStack
+            // 
             labelplayerStack.AutoSize = true;
             labelplayerStack.Font = new Font("宋体", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 134);
             labelplayerStack.Location = new Point(20, 125);
@@ -104,7 +119,9 @@
             labelplayerStack.Size = new Size(119, 20);
             labelplayerStack.TabIndex = 1;
             labelplayerStack.Text = "叠层次数：0";
-            // 控件: labelplayerDot（玩家 DOT 层数标签）
+            // 
+            // labelplayerDot
+            // 
             labelplayerDot.AutoSize = true;
             labelplayerDot.Font = new Font("宋体", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 134);
             labelplayerDot.ForeColor = Color.FromArgb(0, 192, 0);
@@ -114,7 +131,9 @@
             labelplayerDot.Size = new Size(109, 20);
             labelplayerDot.TabIndex = 1;
             labelplayerDot.Text = "Dot层数：0";
-            // 控件: labelenemyName（敌人名称标签）
+            // 
+            // labelenemyName
+            // 
             labelenemyName.AutoSize = true;
             labelenemyName.BackColor = Color.Transparent;
             labelenemyName.Font = new Font("宋体", 12F, FontStyle.Bold, GraphicsUnit.Point, 134);
@@ -125,7 +144,9 @@
             labelenemyName.TabIndex = 0;
             labelenemyName.Text = "敌人";
             labelenemyName.Click += playerNameLabel_Click;
-            // 控件: labelenemyHp（敌人生命标签）
+            // 
+            // labelenemyHp
+            // 
             labelenemyHp.AutoSize = true;
             labelenemyHp.Font = new Font("宋体", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 134);
             labelenemyHp.ForeColor = Color.Red;
@@ -135,7 +156,9 @@
             labelenemyHp.Size = new Size(159, 20);
             labelenemyHp.TabIndex = 1;
             labelenemyHp.Text = "生命值：100/100";
-            // 控件: labelenemyShied（敌人护盾标签）
+            // 
+            // labelenemyShied
+            // 
             labelenemyShied.AutoSize = true;
             labelenemyShied.Font = new Font("宋体", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 134);
             labelenemyShied.ForeColor = Color.Gray;
@@ -145,7 +168,9 @@
             labelenemyShied.Size = new Size(99, 20);
             labelenemyShied.TabIndex = 1;
             labelenemyShied.Text = "护盾值：0";
-            // 控件: labelenemyEnergy（敌人充能标签）
+            // 
+            // labelenemyEnergy
+            // 
             labelenemyEnergy.AutoSize = true;
             labelenemyEnergy.Font = new Font("宋体", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 134);
             labelenemyEnergy.ForeColor = Color.Blue;
@@ -155,7 +180,9 @@
             labelenemyEnergy.Size = new Size(119, 20);
             labelenemyEnergy.TabIndex = 1;
             labelenemyEnergy.Text = "当前充能：4";
-            // 控件: labelenemyStack（敌人叠层次数标签）
+            // 
+            // labelenemyStack
+            // 
             labelenemyStack.AutoSize = true;
             labelenemyStack.Font = new Font("宋体", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 134);
             labelenemyStack.Location = new Point(600, 125);
@@ -164,7 +191,9 @@
             labelenemyStack.Size = new Size(119, 20);
             labelenemyStack.TabIndex = 1;
             labelenemyStack.Text = "叠层次数：0";
-            // 控件: labelenemyDot（敌人 DOT 层数标签）
+            // 
+            // labelenemyDot
+            // 
             labelenemyDot.AutoSize = true;
             labelenemyDot.Font = new Font("宋体", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 134);
             labelenemyDot.ForeColor = Color.FromArgb(0, 192, 0);
@@ -174,7 +203,9 @@
             labelenemyDot.Size = new Size(109, 20);
             labelenemyDot.TabIndex = 1;
             labelenemyDot.Text = "Dot层数：0";
-            // 控件: picPlayer（玩家头像图片框）
+            // 
+            // picPlayer
+            // 
             picPlayer.BorderStyle = BorderStyle.FixedSingle;
             picPlayer.Location = new Point(20, 180);
             picPlayer.Name = "picPlayer";
@@ -182,7 +213,9 @@
             picPlayer.SizeMode = PictureBoxSizeMode.Zoom;
             picPlayer.TabIndex = 2;
             picPlayer.TabStop = false;
-            // 控件: picEnemy（敌人头像图片框）
+            // 
+            // picEnemy
+            // 
             picEnemy.BorderStyle = BorderStyle.FixedSingle;
             picEnemy.Location = new Point(600, 180);
             picEnemy.Name = "picEnemy";
@@ -190,7 +223,9 @@
             picEnemy.SizeMode = PictureBoxSizeMode.Zoom;
             picEnemy.TabIndex = 2;
             picEnemy.TabStop = false;
-            // 控件: logTitle（日志标题）
+            // 
+            // logTitle
+            // 
             logTitle.AutoSize = true;
             logTitle.Font = new Font("宋体", 12F, FontStyle.Bold, GraphicsUnit.Point, 134);
             logTitle.Location = new Point(220, 20);
@@ -199,7 +234,9 @@
             logTitle.Size = new Size(110, 24);
             logTitle.TabIndex = 2;
             logTitle.Text = "战斗日志";
-            // 控件: logTextBox（战斗日志文本框）
+            // 
+            // logTextBox
+            // 
             logTextBox.BorderStyle = BorderStyle.FixedSingle;
             logTextBox.Font = new Font("宋体", 8F, FontStyle.Regular, GraphicsUnit.Point, 134);
             logTextBox.Location = new Point(220, 50);
@@ -212,7 +249,9 @@
             logTextBox.Text = "战斗即将开始";
             logTextBox.WordWrap = false;
             logTextBox.TextChanged += logTextBox_TextChanged;
-            // 控件: btnEndTurn（结束回合按钮）
+            // 
+            // btnEndTurn
+            // 
             btnEndTurn.BackColor = Color.DarkGreen;
             btnEndTurn.Font = new Font("宋体", 10F, FontStyle.Regular, GraphicsUnit.Point, 134);
             btnEndTurn.ForeColor = Color.White;
@@ -222,27 +261,35 @@
             btnEndTurn.TabIndex = 4;
             btnEndTurn.Text = "结束回合";
             btnEndTurn.UseVisualStyleBackColor = false;
-            // 控件: handPanel（手牌面板，显示玩家手牌按钮）
+            // 
+            // handPanel
+            // 
             handPanel.AutoScroll = true;
             handPanel.Location = new Point(220, 380);
             handPanel.Name = "handPanel";
             handPanel.Size = new Size(360, 60);
             handPanel.TabIndex = 5;
-            // 控件: lblDiscardTitle（弃牌堆标题）
+            // 
+            // lblDiscardTitle
+            // 
             lblDiscardTitle.AutoSize = true;
             lblDiscardTitle.Location = new Point(20, 416);
             lblDiscardTitle.Name = "lblDiscardTitle";
             lblDiscardTitle.Size = new Size(64, 24);
             lblDiscardTitle.TabIndex = 5;
             lblDiscardTitle.Text = "弃牌堆";
-            // 控件: lblDiscardCount（弃牌堆计数标签）
+            // 
+            // lblDiscardCount
+            // 
             lblDiscardCount.AutoSize = true;
             lblDiscardCount.Location = new Point(20, 520);
             lblDiscardCount.Name = "lblDiscardCount";
             lblDiscardCount.Size = new Size(21, 24);
             lblDiscardCount.TabIndex = 7;
             lblDiscardCount.Text = "0";
-            // 控件: picDiscard（弃牌堆图片框，点击查看）
+            // 
+            // picDiscard
+            // 
             picDiscard.BorderStyle = BorderStyle.FixedSingle;
             picDiscard.Location = new Point(19, 443);
             picDiscard.Name = "picDiscard";
@@ -251,21 +298,27 @@
             picDiscard.TabIndex = 6;
             picDiscard.TabStop = false;
             picDiscard.Click += PicDiscard_Click;
-            // 控件: lblDrawTitle（抽牌堆标题）
+            // 
+            // lblDrawTitle
+            // 
             lblDrawTitle.AutoSize = true;
             lblDrawTitle.Location = new Point(660, 416);
             lblDrawTitle.Name = "lblDrawTitle";
             lblDrawTitle.Size = new Size(64, 24);
             lblDrawTitle.TabIndex = 8;
             lblDrawTitle.Text = "抽牌堆";
-            // 控件: lblDrawCount（抽牌堆计数标签）
+            // 
+            // lblDrawCount
+            // 
             lblDrawCount.AutoSize = true;
             lblDrawCount.Location = new Point(660, 525);
             lblDrawCount.Name = "lblDrawCount";
             lblDrawCount.Size = new Size(21, 24);
             lblDrawCount.TabIndex = 9;
             lblDrawCount.Text = "0";
-            // 控件: picDraw（抽牌堆图片框，点击查看）
+            // 
+            // picDraw
+            // 
             picDraw.BorderStyle = BorderStyle.FixedSingle;
             picDraw.Location = new Point(660, 452);
             picDraw.Name = "picDraw";
@@ -274,7 +327,9 @@
             picDraw.TabIndex = 6;
             picDraw.TabStop = false;
             picDraw.Click += PicDraw_Click;
-            // 控件: btnPause（暂停按钮）
+            // 
+            // btnPause
+            // 
             btnPause.BackColor = Color.DarkRed;
             btnPause.Font = new Font("宋体", 10F, FontStyle.Regular, GraphicsUnit.Point, 134);
             btnPause.ForeColor = Color.White;
@@ -284,7 +339,9 @@
             btnPause.TabIndex = 4;
             btnPause.Text = "暂停";
             btnPause.UseVisualStyleBackColor = false;
-            // 控件: pictureBoxDesktop（背景图片容器）
+            // 
+            // pictureBoxDesktop
+            // 
             pictureBoxDesktop.Dock = DockStyle.Fill;
             pictureBoxDesktop.Location = new Point(0, 0);
             pictureBoxDesktop.Name = "pictureBoxDesktop";
@@ -292,10 +349,32 @@
             pictureBoxDesktop.TabIndex = 10;
             pictureBoxDesktop.TabStop = false;
             pictureBoxDesktop.Paint += pictureBoxDesktop_Paint;
-            // 窗体: BattleSoul（主窗体属性设置）
+            // 
+            // axWindowsMediaPlayerBGM
+            // 
+            axWindowsMediaPlayerBGM.Enabled = true;
+            axWindowsMediaPlayerBGM.Location = new Point(504, 7);
+            axWindowsMediaPlayerBGM.Name = "axWindowsMediaPlayerBGM";
+            axWindowsMediaPlayerBGM.OcxState = (AxHost.State)resources.GetObject("axWindowsMediaPlayerBGM.OcxState");
+            axWindowsMediaPlayerBGM.Size = new Size(75, 23);
+            axWindowsMediaPlayerBGM.TabIndex = 11;
+            // 
+            // axWindowsMediaPlayereasteregg
+            // 
+            axWindowsMediaPlayereasteregg.Enabled = true;
+            axWindowsMediaPlayereasteregg.Location = new Point(504, 21);
+            axWindowsMediaPlayereasteregg.Name = "axWindowsMediaPlayereasteregg";
+            axWindowsMediaPlayereasteregg.OcxState = (AxHost.State)resources.GetObject("axWindowsMediaPlayereasteregg.OcxState");
+            axWindowsMediaPlayereasteregg.Size = new Size(75, 23);
+            axWindowsMediaPlayereasteregg.TabIndex = 11;
+            // 
+            // BattleSoul
+            // 
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(778, 544);
+            Controls.Add(axWindowsMediaPlayereasteregg);
+            Controls.Add(axWindowsMediaPlayerBGM);
             Controls.Add(btnEndTurn);
             Controls.Add(btnPause);
             Controls.Add(picEnemy);
@@ -336,6 +415,8 @@
             ((System.ComponentModel.ISupportInitialize)picDiscard).EndInit();
             ((System.ComponentModel.ISupportInitialize)picDraw).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBoxDesktop).EndInit();
+            ((System.ComponentModel.ISupportInitialize)axWindowsMediaPlayerBGM).EndInit();
+            ((System.ComponentModel.ISupportInitialize)axWindowsMediaPlayereasteregg).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -369,5 +450,7 @@
         private Label lblDrawCount;
         private PictureBox picDraw;
         private PictureBox pictureBoxDesktop;
+        private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayerBGM;
+        private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayereasteregg;
     }
 }

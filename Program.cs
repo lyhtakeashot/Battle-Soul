@@ -2,8 +2,6 @@ namespace Battle_Soul
 {
     internal static class Program
     {
-        // Main
-        // 应用程序入口方法
         [STAThread]
         static void Main()
         {
